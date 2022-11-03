@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, DocumentReference, QuerySnapshot } from '@angular/fire/compat/firestore';
 import IClip from '../models/clip.model';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { switchMap, of, map, BehaviorSubject, combineLatest } from 'rxjs';
+import { switchMap, of, map, BehaviorSubject, combineLatest,lastValueFrom } from 'rxjs';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Injectable({
@@ -59,21 +59,19 @@ export class ClipService {
   }
 
   async getClips(){
-    if(this.pendingReq) return
+    if(this.pendingReq) {return}
 
     this.pendingReq=true
-    let query=this.clipsCollection.ref.orderBy('timestamp','desc').limit(6)
+    let query=this.clipsCollection.ref.orderBy('timestamp','desc').limit(4)
 
     const {length}=this.pageClips
 
     if(length){
       const lastDocID=this.pageClips[length-1].docID
-      const lastDoc= await this.clipsCollection.doc(lastDocID)
-      .get()
-      .toPromise()
+      const lastDoc = await this.clipsCollection.doc(lastDocID).get().toPromise();
 
       query=query.startAfter(lastDoc)
-
+      }
       const snapshot=await query.get()
       snapshot.forEach(doc=>{
         this.pageClips.push({
@@ -82,6 +80,6 @@ export class ClipService {
       })
       })
       this.pendingReq=false
-    }
+    
   }
 }

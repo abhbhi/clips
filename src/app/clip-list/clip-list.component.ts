@@ -13,7 +13,6 @@ export class ClipListComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit(): void {
-    this.clipService.getClips()
     window.addEventListener('scroll',this.handleScroll)
   }
 
