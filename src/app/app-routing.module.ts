@@ -6,6 +6,7 @@ import { ClipComponent } from './clip/clip.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { resolve } from 'path';
 import { ClipService } from './services/clip.service';
+import { async } from '@angular/core/testing';
 const routes: Routes = [
   {
     path:'',
@@ -21,6 +22,10 @@ const routes: Routes = [
     resolve:{
       clip: ClipService
     }
+  },
+  {
+    path:'',
+    loadChildren: async()=> (await import('./video/video.module')).VideoModule
   },
   {
     path:'**',
